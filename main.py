@@ -15,15 +15,16 @@ async def status():
 
 
 @app.post('/run_command')
-async def run_command(command: str):
+async def run_command(command: str, directory: str):
     print(command)
-    p = Popen(command.split(), shell=True, stdout=PIPE, stderr=PIPE)
+    p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE, cwd=directory)
     stdout, stderr = p.communicate()
     if stderr:
         return {'status': 500, 'message': stderr.decode('utf-8')}
     return {'status': 200, 'message': stdout.decode('utf-8')}
 
 
-uvicorn.run(app, host=data['host'], port=data['port'])
+if __name__ == '__main__':
+    uvicorn.run('main:app', reload=True, port=data['port'], host=data['host'])
 
 
